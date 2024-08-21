@@ -1,36 +1,32 @@
 server {
-        location /hbnb_static {alias /data/web_static/current/;index index.html;}
+  listen 80 default_server;
+  rewrite ^/redirect_me https://github.com/devbn3li/ permanent;
+  listen [::]:80 default_server;
 
-        add_header X-Served-By 392319-web-01;
-        listen 80 default_server;
-        listen [::]:80 default_server;
+  root /var/www/html;
 
-        root /var/www/html;
+  # Add index.php to the list if you are using PHP
+  index index.html index.htm index.nginx-debian.html;
 
-        index index.html index.htm index.nginx-debian.html;
+  server_name 100.27.10.5;
 
-        server_name _;
+  location / {
+    # First attempt to serve request as file, then
+    # as directory, then fall back to displaying a 404.
+    try_files $uri $uri/ =404;
+  }
 
-        location / {
-                try_files $uri $uri/ @404;
-        }
+  location = /airbnb-onepage/ {
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_pass http://127.0.0.1:5000/airbnb-onepage/;
+  }
 
-        location /airbnb-onepage {
-                proxy_pass http://localhost:5000/airbnb-onepage;
-                proxy_redirect off;
-        }
+  location ~ /airbnb-dynamic/number_odd_or_even/(\d+)$ {
+    proxy_pass http://127.0.0.1:5001/number_odd_or_even/$1;
+  }
 
-        location /airbnb-dynamic/number_odd_or_even/ {
-                proxy_pass http://localhost:5001/number_odd_or_even/;
-                proxy_redirect off;
-        }
+  location /api {
+    proxy_pass http://127.0.0.1:5002/api;
+  }
 
-        location /api/ {
-                proxy_pass http://localhost:5002/api/;
-                proxy_redirect off;
-        }
-
-        location /redirect_me {return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;}
-
-        location @404 {return 404 "Ceci n'est pas une page\n";}
 }

@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
-# No service interruption
+# Gracefully reload Gunicorn
 
 pgrep gunicorn | xargs -I {} kill -HUP {}
