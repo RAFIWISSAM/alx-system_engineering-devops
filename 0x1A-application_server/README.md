@@ -1,4 +1,1 @@
-Application server
-This was the application deployment project for our AirBnB clone.
-
-
+readme
